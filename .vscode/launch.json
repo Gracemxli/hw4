@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "env": {"GTEST_BREAK_ON_FAILURE":"1"},
+      "args": [],
+      "cwd": "/Users/graceli/Documents/GitHub/hw4",
+      "program": "/Users/graceli/Documents/GitHub/hw4/equal-paths-test"
+    }
+  ]
+}
