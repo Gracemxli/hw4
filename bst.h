@@ -267,6 +267,8 @@ template<class Key, class Value>
 BinarySearchTree<Key, Value>::iterator::iterator(Node<Key,Value> *ptr)
 {
     // TODO
+    current_=ptr;
+
 }
 
 /**
@@ -276,7 +278,8 @@ template<class Key, class Value>
 BinarySearchTree<Key, Value>::iterator::iterator() 
 {
     // TODO
-
+    current_=NULL;
+    
 }
 
 /**
@@ -309,6 +312,12 @@ BinarySearchTree<Key, Value>::iterator::operator==(
     const BinarySearchTree<Key, Value>::iterator& rhs) const
 {
     // TODO
+    if(current_== rhs.current_){
+
+        return true;
+    }
+    if()
+    return false;
 }
 
 /**
@@ -356,6 +365,7 @@ template<class Key, class Value>
 BinarySearchTree<Key, Value>::BinarySearchTree() 
 {
     // TODO
+    root_ = NULL;
 }
 
 template<typename Key, typename Value>
@@ -445,6 +455,41 @@ template<class Key, class Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &keyValuePair)
 {
     // TODO
+    //check number of children 
+    if (root_==NULL){
+        Node<Key, Value> *node = new Node<Key,Value>(keyValuePair.first, keyValuePair.second, NULL);
+        root_ = node;
+        return;
+    }
+  //if ((root_->left!=NULL&&root->right ==NULL)||if (root_->left==NULL&&root->right !=NULL))
+    Node<Key, Value> *scan = root_;
+    while(scan!=NULL){
+       if(scan->getKey()==keyValuePair.first){
+            scan->setValue(keyValuePair.second);
+            return;
+       }
+       else if(scan->getKey()>keyValuePair.first){
+            if (scan->getLeft()==NULL){
+                Node<Key, Value> *node = new Node<Key,Value>(keyValuePair.first, keyValuePair.second, scan);
+                scan->setLeft(node);
+                return;
+            }
+            scan = scan->getLeft();
+       }
+       else{
+            if (scan->getRight()==NULL){
+                Node<Key, Value> *node = new Node<Key,Value>(keyValuePair.first, keyValuePair.second, scan);
+                scan->setRight(node);
+                return;
+            }
+            scan = scan->getRight();
+       }
+    }
+
+
+       
+    
+
 }
 
 
@@ -499,6 +544,19 @@ template<typename Key, typename Value>
 Node<Key, Value>* BinarySearchTree<Key, Value>::internalFind(const Key& key) const
 {
     // TODO
+    Node<Key, Value> *scan = root_;
+    while(scan!=NULL){
+       if(scan->getKey()==key){
+            return scan;
+       }
+       else if(scan->getKey()>key){
+            scan = scan->getLeft();
+       }
+       else{
+            scan = scan->getRight();
+       }
+    }
+    return NULL;
 }
 
 /**
