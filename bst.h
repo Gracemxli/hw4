@@ -314,9 +314,12 @@ BinarySearchTree<Key, Value>::iterator::operator==(
     // TODO
     if(current_== rhs.current_){
 
+        
         return true;
     }
-    if()
+    if(current_->getValue()== rhs.current_->getValue()){
+        return true;
+    }
     return false;
 }
 
@@ -502,6 +505,7 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
     // TODO
+    
 }
 
 

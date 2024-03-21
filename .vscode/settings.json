@@ -78,6 +78,9 @@
     "unordered_map": "cpp",
     "vector": "cpp",
     "version": "cpp",
-    "*.in": "cpp"
+    "*.in": "cpp",
+    "algorithm": "cpp",
+    "cstdio": "cpp",
+    "typeinfo": "cpp"
   }
 }
