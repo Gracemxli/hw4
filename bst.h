@@ -505,7 +505,59 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
     // TODO
-    
+    Node<Key, Value> *target = internalFind(key);
+    if(target==NULL){
+        return;
+    }
+    if(target->getLeft()==NULL&&target->getRight()==NULL){
+        Node<Key,Value> *parent = target->getParent();
+        if(parent==NULL){
+            delete target;
+            root_=NULL;
+            return;
+        }
+        if(parent->getLeft()==target){
+            parent->setLeft(NULL);
+        }
+        else if (parent->getRight()==target){
+            parent->setRight(NULL);
+        }
+        delete target;
+        return;
+    }
+    if(target->getLeft()==NULL||target->getRight()==NULL) {
+        
+        bool left = true;
+        Node<Key,Value> *child = target->getLeft();
+         if(target->getRight()!=NULL){
+            child=target->getRight();
+            left = false;
+        }
+
+        Node<Key,Value> *parent = target->getParent();
+        if(parent==NULL){
+            root_=child;
+            delete target;
+            return;
+        }
+        
+        if (left){
+            parent->setLeft(child);
+        }
+        else{
+            parent->setRight(child);
+        }
+        child->setParent(parent);
+        delete target;
+        return;
+    }
+
+
+    if(target->getLeft()!=NULL&&target->getRight()!=NULL) { 
+        
+    }
+
+
 }
 
 
