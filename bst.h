@@ -407,13 +407,56 @@ bool BinarySearchTree<Key, Value>::empty() const
 {
     return root_ == NULL;
 }
-
+/*
 template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::print() const
 {
     printRoot(root_);
     std::cout << "\n";
 }
+*/
+
+#include <queue>
+#include <set>
+#include <cassert>
+
+
+template<typename Key, typename Value>
+void BinarySearchTree<Key, Value>::print() const
+{
+   printRoot(root_);
+   std::cout << "\n";
+
+
+   // https://dreampuf.github.io/GraphvizOnline/
+   std::queue<Node<Key, Value>*> q;
+   std::set<Node<Key, Value>*> s; // Tree shouldn't have repeats
+   if (root_!=NULL) {
+       q.push(root_);
+       s.insert(root_);
+   }
+   std::cout << "\ndigraph G {";
+   while (!q.empty()) {
+       Node<Key, Value>* n=q.front(); q.pop();
+       Node<Key, Value>* lr[]={n->getLeft(), n->getRight()};
+       std::string color="green";
+       if (lr[0]==NULL && lr[1]==NULL && n->getParent()) {
+           if (n->getParent()->getLeft()==n) { color="red"; }
+           std::cout << '"' << n->getKey() << "\" [ color="<<color<<"];";
+       }
+       for (int i=0; i<2; i++) {
+           Node<Key, Value>*c=lr[i];
+           if (c==NULL)
+               continue;
+           q.push(c);
+           std::cout<<'"'<<n->getKey()<<"\"->\""<<c->getKey() << "\";";
+           assert(c->getParent()==n && s.find(c)==s.end());
+           s.insert(c);
+       }
+   }
+   std::cout << "}\n";
+}
+
 
 /**
 * Returns an iterator to the "smallest" item in the tree
@@ -630,7 +673,7 @@ template<class Key, class Value>
 Node<Key, Value>*
 BinarySearchTree<Key, Value>::successor(Node<Key, Value>* current)
 {
-
+    print();
     Node<Key,Value> *succ = current;
 
     if(current==NULL){
