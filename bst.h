@@ -248,6 +248,32 @@ protected:
 
     // Add helper functions here
     static Node<Key, Value>* successor(Node<Key, Value>* current);
+    int getHeight(Node<Key,Value> *node, int level)const{
+
+        if (node == NULL ){
+            return level; 
+        }
+        
+        int leftLevel = getHeight(node->getLeft(), level+1);
+        if (leftLevel==-1){
+            return -1;
+        }
+        int rightLevel = getHeight(node->getRight(), level+1); 
+        if(rightLevel==-1){
+            return -1;
+        }
+
+        int diff = (leftLevel-rightLevel);
+        if(diff<=1&&diff>=-1){
+            if(leftLevel>rightLevel){
+                return leftLevel;
+            }
+            return rightLevel;
+        }
+        return -1;
+
+
+}
 
 protected:
     Node<Key, Value>* root_;
@@ -606,6 +632,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
         Node<Key,Value> *parent = target->getParent();
         if(parent==NULL){
             root_=child;
+            root_->setParent(NULL);
             delete target;
             return;
         }
@@ -673,7 +700,6 @@ template<class Key, class Value>
 Node<Key, Value>*
 BinarySearchTree<Key, Value>::successor(Node<Key, Value>* current)
 {
-    print();
     Node<Key,Value> *succ = current;
 
     if(current==NULL){
@@ -771,8 +797,14 @@ template<typename Key, typename Value>
 bool BinarySearchTree<Key, Value>::isBalanced() const
 {
     // TODO
-    int i =0;
+    
+    int treeHeight = getHeight(root_, 0);
+    if(treeHeight == -1){
+        return false;
+    }
+    return true;    
 }
+
 
 
 
