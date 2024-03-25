@@ -8,7 +8,7 @@
       "env": {"GTEST_BREAK_ON_FAILURE":"1"},
       "args": [],
       "cwd": "/Users/graceli/Documents/GitHub/hw4",
-      "program": "/Users/graceli/Documents/GitHub/hw4/hw4_tests/bst_tests/bst_tests"
+      "program": "/Users/graceli/Documents/GitHub/hw4/hw4_tests/avl_tests/avl_tests"
     }
   ]
 }

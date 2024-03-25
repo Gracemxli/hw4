@@ -137,8 +137,7 @@ protected:
     virtual void nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* n2);
 
     // Add helper functions here
-
-
+     void insertFix( const AVLNode<Key, Value> *parent, const AVLNode<Key, Value> *node);
 };
 
 /*
@@ -149,6 +148,42 @@ template<class Key, class Value>
 void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
 {
     // TODO
+    if (this->root_==NULL){
+        AVLNode<Key, Value> *node = new AVLNode<Key,Value>(new_item.first, new_item.second, NULL);
+        this->root_ = node;
+        return;
+    }
+  //if ((root_->left!=NULL&&root->right ==NULL)||if (root_->left==NULL&&root->right !=NULL))
+    AVLNode<Key, Value> *scan = static_cast<AVLNode<Key, Value>*>(this->root_);
+    while(scan!=NULL){
+       if(scan->getKey()==new_item.first){
+            scan->setValue(new_item.second);
+            return;
+       }
+       else if(scan->getKey()>new_item.first){
+            if (scan->getLeft()==NULL){
+                AVLNode<Key, Value> *node = new AVLNode<Key,Value>(new_item.first, new_item.second, scan);
+                scan->setLeft(node);
+                return;
+            }
+            scan = scan->getLeft();
+       }
+       else{
+            if (scan->getRight()==NULL){
+                AVLNode<Key, Value> *node = new AVLNode<Key,Value>(new_item.first, new_item.second, scan);
+                scan->setRight(node);
+                return;
+            }
+            scan = scan->getRight();
+       }
+    }
+    /* If empty tree => set n as root, b(n) = 0, done!
+• Else insert n (by walking the tree to a leaf, p, and
+inserting the new node as its child), set balance
+to 0, and look at its parent, p
+– If b(p) was -1, then b(p) = 0. Done!
+– If b(p) was +1, then b(p) = 0. Done!
+– If b(p) was 0, then update b(p) and call insert-fix(p, n) */
 }
 
 /*
@@ -170,5 +205,24 @@ void AVLTree<Key, Value>::nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* 
     n2->setBalance(tempB);
 }
 
+template<class Key, class Value>
+void AVLTree<Key, Value>::insertFix (const AVLNode<Key, Value> *parent, const AVLNode<Key, Value> *node)
+{
+
+  /* Precondition: p and n are balanced: {-1,0,-1}
+• Postcondition: g, p, and n are balanced: {-1,0,-1}
+• If p is null or parent(p) is null, return
+• Let g = parent(p)
+• Assume p is left child of g [For right child swap left/right, +/-]
+– b(g) += -1 // Update g's balance to new accurate value for now
+– Case 1: b(g) == 0, return
+– Case 2: b(g) == -1, insertFix(g, p) // recurse
+– Case 3: b(g) == -2
+• If zig-zig then rotateRight(g); b(p) = b(g) = 0
+• If zig-zag then rotateLeft(p); rotateRight(g);
+– Case 3a: b(n) == -1 then b(p) = 0; b(g) = +1; b(n) = 0;
+– Case 3b: b(n) == 0 then b(p) = 0; b(g) = 0; b(n) = 0;
+– Case 3c: b(n) == +1 then b(p)= -1; b(g) = 0; b(n) = 0; */
+}
 
 #endif
