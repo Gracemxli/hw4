@@ -176,13 +176,68 @@ protected:
         return balanceDiff;
 
     }
-    AVLNode<Key,Value>* rotateRight(AVLNode<Key,Value> *z){
+    AVLNode<Key,Value>* zigzig(AVLNode<Key,Value> *z){
         AVLNode<Key,Value> *y  = z->getLeft();
         AVLNode<Key,Value> *x  = y->getLeft();
 
         y->setParent(z->getParent());
         z->setLeft(y->getRight());
         y->setRight(z);
+        z->setParent(y);
+
+        getHeightDiff(x);
+        getHeightDiff(z);
+        getHeightDiff(y);
+
+        return y;
+       
+    }
+    AVLNode<Key,Value>* zigzag(AVLNode<Key,Value> *z){
+        AVLNode<Key,Value> *y  = z->getLeft();
+        AVLNode<Key,Value> *x  = y->getRight();
+
+        y->setParent(x);
+        y->setRight(x->getLeft());
+        z->setLeft(x->getRight());
+        x->setLeft(y);
+        x->setRight(z);
+        x->setParent(z->getParent());
+        z->setParent(x);
+
+        getHeightDiff(x);
+        getHeightDiff(z);
+        getHeightDiff(y);
+
+        return x;
+       
+    }
+    AVLNode<Key,Value>* zagzig(AVLNode<Key,Value> *z){
+        AVLNode<Key,Value> *y  = z->getRight();
+        AVLNode<Key,Value> *x  = y->getLeft();
+
+        y->setParent(x);
+        y->setLeft(x->getRight());
+        z->setRight(x->getLeft());
+        x->setRight(y);
+        x->setLeft(z);
+        x->setParent(z->getParent());
+        z->setParent(x);
+
+
+        getHeightDiff(x);
+        getHeightDiff(z);
+        getHeightDiff(y);
+
+        return x;
+       
+    }
+    AVLNode<Key,Value>* zagzag(AVLNode<Key,Value> *z){
+        AVLNode<Key,Value> *y  = z->getRight();
+        AVLNode<Key,Value> *x  = y->getRight();
+
+        y->setParent(z->getParent());
+        z->setRight(y->getLeft());
+        y->setRight(x);
         z->setParent(y);
 
         getHeightDiff(x);
@@ -269,28 +324,21 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
             int left = getHeightDiff(scan->getLeft());
             if(left<0){
                 dump();
-                scan = rotateRight(scan); 
+                scan = zigzig(scan); 
                 
                 dump();
             }
             else{
-                assert(0);
-                //rotate right 
-                //rotate left
+                scan = zigzag(scan);
             }
         }
         if (balanceDiff>=2){
             int right= getHeightDiff(scan->getRight());
             if(right<0){
-                assert(0);
-
-                //rotate left rotate right
+                scan =zagzig(scan);
             }
             else{
-                assert(0);
-
-                // rotate left
-                // rotate left 
+                scan = zagzag(scan);
             }
             
 
