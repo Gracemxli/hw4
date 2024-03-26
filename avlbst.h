@@ -126,6 +126,25 @@ AVLNode<Key, Value> *AVLNode<Key, Value>::getRight() const
   -----------------------------------------------
 */
 
+/*
+template <class Key, class Value>
+class AVLTree : public BinarySearchTree<Key, Value>
+{
+public:
+    virtual void insert (const std::pair<const Key, Value> &new_item); // TODO
+    virtual void remove(const Key& key);  // TODO
+protected:
+    virtual void nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* n2);
+
+    // Add helper functions here
+};
+*/
+
+
+#include <queue>
+#include <set>
+#include <cassert>
+
 
 template <class Key, class Value>
 class AVLTree : public BinarySearchTree<Key, Value>
@@ -137,9 +156,76 @@ protected:
     virtual void nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* n2);
 
     // Add helper functions here
-     void insertFix( const AVLNode<Key, Value> *parent, const AVLNode<Key, Value> *node);
-};
 
+    int getHeightDiff(AVLNode<Key,Value>* scan){
+        int lBalance = -1;
+        int rBalance =-1; 
+        if(scan->getLeft()!=NULL){
+            lBalance= scan->getLeft()->getBalance();
+        }
+        if(scan->getRight()!=NULL){
+            rBalance= scan->getRight()->getBalance();
+        }
+        int maxBalance = lBalance;
+        if(lBalance<rBalance){
+            maxBalance=rBalance;
+        }
+
+        scan->setBalance(maxBalance+1);
+        int balanceDiff = rBalance-lBalance;
+        return balanceDiff;
+
+    }
+    AVLNode<Key,Value>* rotateRight(AVLNode<Key,Value> *z){
+        AVLNode<Key,Value> *y  = z->getLeft();
+        AVLNode<Key,Value> *x  = y->getLeft();
+
+        y->setParent(z->getParent());
+        z->setLeft(y->getRight());
+        y->setRight(z);
+        z->setParent(y);
+
+        getHeightDiff(x);
+        getHeightDiff(z);
+        getHeightDiff(y);
+
+        return y;
+       
+    }
+
+    void dump() const
+    {
+        AVLNode<Key, Value>* thisRoot = static_cast<AVLNode<Key, Value>*>(this->root_);
+        // https://dreampuf.github.io/GraphvizOnline/
+        std::queue<AVLNode<Key, Value>*> q;
+        std::set<AVLNode<Key, Value>*> s; // Tree shouldn't have repeats
+        if (thisRoot!=NULL) {
+            q.push(thisRoot);
+            s.insert(thisRoot);
+        }
+        std::cout << "\ndigraph G {";
+        while (!q.empty()) {
+            AVLNode<Key, Value>* n=q.front(); q.pop();
+            AVLNode<Key, Value>* lr[]={n->getLeft(), n->getRight()};
+            std::string color="green";
+            if (n->getParent()) {
+                if (n->getParent()->getLeft()==n) { color="red"; }
+                std::cout << '"' << n->getKey() << ":" << (int)n->balance_ << "\" [ color="<<color<<"];";
+            }
+            for (int i=0; i<2; i++) {
+                AVLNode<Key, Value>*c=lr[i];
+                if (c==NULL)
+                    continue;
+                q.push(c);
+                std::cout<<'"'<<n->getKey()<< ":" << (int)n->balance_ <<"\"->\""<<c->getKey() << ":" << (int)c->balance_ << "\";";
+                assert(c->getParent()==n && s.find(c)==s.end());
+                s.insert(c);
+            }
+        }
+        std::cout << "}\n";
+    }
+};
+//delete later
 /*
  * Recall: If key is already in the tree, you should 
  * overwrite the current value with the updated value.
@@ -164,7 +250,7 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
             if (scan->getLeft()==NULL){
                 AVLNode<Key, Value> *node = new AVLNode<Key,Value>(new_item.first, new_item.second, scan);
                 scan->setLeft(node);
-                return;
+                break;
             }
             scan = scan->getLeft();
        }
@@ -172,19 +258,52 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
             if (scan->getRight()==NULL){
                 AVLNode<Key, Value> *node = new AVLNode<Key,Value>(new_item.first, new_item.second, scan);
                 scan->setRight(node);
-                return;
+                break;
             }
             scan = scan->getRight();
        }
     }
-    /* If empty tree => set n as root, b(n) = 0, done!
-• Else insert n (by walking the tree to a leaf, p, and
-inserting the new node as its child), set balance
-to 0, and look at its parent, p
-– If b(p) was -1, then b(p) = 0. Done!
-– If b(p) was +1, then b(p) = 0. Done!
-– If b(p) was 0, then update b(p) and call insert-fix(p, n) */
+    while(scan!=NULL){
+        int balanceDiff= getHeightDiff(scan);
+        if (balanceDiff<=-2){
+            int left = getHeightDiff(scan->getLeft());
+            if(left<0){
+                dump();
+                scan = rotateRight(scan); 
+                
+                dump();
+            }
+            else{
+                assert(0);
+                //rotate right 
+                //rotate left
+            }
+        }
+        if (balanceDiff>=2){
+            int right= getHeightDiff(scan->getRight());
+            if(right<0){
+                assert(0);
+
+                //rotate left rotate right
+            }
+            else{
+                assert(0);
+
+                // rotate left
+                // rotate left 
+            }
+            
+
+        }
+        if(scan->getParent()==NULL){
+            this->root_=scan;
+        }
+        scan = scan->getParent();
+        dump();
+    }    
+    
 }
+
 
 /*
  * Recall: The writeup specifies that if a node has 2 children you
@@ -205,24 +324,7 @@ void AVLTree<Key, Value>::nodeSwap( AVLNode<Key,Value>* n1, AVLNode<Key,Value>* 
     n2->setBalance(tempB);
 }
 
-template<class Key, class Value>
-void AVLTree<Key, Value>::insertFix (const AVLNode<Key, Value> *parent, const AVLNode<Key, Value> *node)
-{
 
-  /* Precondition: p and n are balanced: {-1,0,-1}
-• Postcondition: g, p, and n are balanced: {-1,0,-1}
-• If p is null or parent(p) is null, return
-• Let g = parent(p)
-• Assume p is left child of g [For right child swap left/right, +/-]
-– b(g) += -1 // Update g's balance to new accurate value for now
-– Case 1: b(g) == 0, return
-– Case 2: b(g) == -1, insertFix(g, p) // recurse
-– Case 3: b(g) == -2
-• If zig-zig then rotateRight(g); b(p) = b(g) = 0
-• If zig-zag then rotateLeft(p); rotateRight(g);
-– Case 3a: b(n) == -1 then b(p) = 0; b(g) = +1; b(n) = 0;
-– Case 3b: b(n) == 0 then b(p) = 0; b(g) = 0; b(n) = 0;
-– Case 3c: b(n) == +1 then b(p)= -1; b(g) = 0; b(n) = 0; */
-}
+
 
 #endif
