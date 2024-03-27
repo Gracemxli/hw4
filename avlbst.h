@@ -204,9 +204,9 @@ protected:
         x->setParent(z->getParent());
         z->setParent(x);
 
-        getHeightDiff(x);
-        getHeightDiff(z);
         getHeightDiff(y);
+        getHeightDiff(z);
+        getHeightDiff(x);
 
         return x;
        
@@ -224,9 +224,9 @@ protected:
         z->setParent(x);
 
 
-        getHeightDiff(x);
-        getHeightDiff(z);
         getHeightDiff(y);
+        getHeightDiff(z);
+        getHeightDiff(x);
 
         return x;
        
@@ -237,7 +237,7 @@ protected:
 
         y->setParent(z->getParent());
         z->setRight(y->getLeft());
-        y->setRight(x);
+        y->setLeft(z);
         z->setParent(y);
 
         getHeightDiff(x);
@@ -329,16 +329,22 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
                 dump();
             }
             else{
+                dump();
                 scan = zigzag(scan);
+                dump();
             }
         }
         if (balanceDiff>=2){
             int right= getHeightDiff(scan->getRight());
             if(right<0){
+                dump();
                 scan =zagzig(scan);
+                dump();
             }
             else{
+                dump();
                 scan = zagzag(scan);
+                dump();
             }
             
 
