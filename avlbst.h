@@ -250,6 +250,8 @@ protected:
 
     void dump() const
     {
+        static int debugger = 1;
+        debugger ++;
         AVLNode<Key, Value>* thisRoot = static_cast<AVLNode<Key, Value>*>(this->root_);
         // https://dreampuf.github.io/GraphvizOnline/
         std::queue<AVLNode<Key, Value>*> q;
@@ -330,7 +332,16 @@ void AVLTree<Key, Value>::insert (const std::pair<const Key, Value> &new_item)
             }
             else{
                 dump();
+                AVLNode<Key,Value> *temp = scan->getParent();
                 scan = zigzag(scan);
+                if(temp!=NULL){
+                    if(scan->getValue()>temp->getValue()){
+                      temp->setRight(scan);
+                    }
+                    else{
+                        temp->setLeft(scan);
+                    }   
+                }
                 dump();
             }
         }
